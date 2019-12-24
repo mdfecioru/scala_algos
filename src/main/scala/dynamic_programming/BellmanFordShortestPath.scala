@@ -1,5 +1,7 @@
 package dynamic_programming
 
+import util.GraphTypes.{Edge, Vertex}
+
 import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
 
@@ -24,48 +26,53 @@ object BellmanFordShortestPath extends App {
     * - COMMENTS:
     */
 
-  case class Edge(tail: Int, head: Int,  weight: Int)
-  case class Vertex(inEdges: ArrayBuffer[Edge])
+  def readGraphFromFile(filename: String): ArrayBuffer[Vertex] = {
+    val adjList = new ArrayBuffer[Vertex]()
+    val iter = Source.fromFile(filename).getLines()
+    val nrVertex =iter.next().toInt
 
-  val INFINITY = Int.MaxValue
-  val adjList = new ArrayBuffer[Vertex]()
-
-  val filename = "src/main/resources/bellmanford_shortest_path.txt"
-  val iter = Source.fromFile(filename).getLines()
-  val nrVertex =iter.next().toInt
-
-  for (_ <- 1 to nrVertex) {
-    adjList.addOne(Vertex(new ArrayBuffer[Edge]()))
-  }
-
-  for (line <- iter) {
-    val items = line.split(" ")
-    val v1 = items(0).toInt - 1
-    val v2 = items(1).toInt - 1
-    val w = items(2).toInt
-    adjList(v2).inEdges.addOne(Edge(v1, v2, w))
-  }
-
-  var arr = new ArrayBuffer[ArrayBuffer[Int]]()
-  var lineArrSource = new ArrayBuffer[Int]()
-  lineArrSource.addOne(0)
-  for (j <- 2 to nrVertex) lineArrSource.addOne(INFINITY)
-  arr.addOne(lineArrSource)
-
-  for (i <- 1 to nrVertex-1) {
-    val lineArr = new ArrayBuffer[Int]()
-    for (j <- 0 to nrVertex-1) {
-      val v = adjList(j)
-      var minVal = arr(i-1)(j)
-      for (inEdge <- v.inEdges) {
-        if (arr(i-1)(inEdge.tail) != INFINITY)
-          minVal = Math.min(minVal, arr(i-1)(inEdge.tail) + inEdge.weight)
-      }
-      lineArr.addOne(minVal)
+    for (_ <- 1 to nrVertex) {
+      adjList.addOne(Vertex(new ArrayBuffer[Edge](), new ArrayBuffer[Edge]()))
     }
-    arr.addOne(lineArr)
+
+    for (line <- iter) {
+      val items = line.split(" ")
+      val v1 = items(0).toInt - 1
+      val v2 = items(1).toInt - 1
+      val w = items(2).toInt
+      adjList(v2).inEdges.addOne(Edge(v1, v2, w))
+      adjList(v1).outEdges.addOne(Edge(v1, v2, w))
+    }
+
+    adjList
   }
 
-  println(arr(nrVertex-1))
+  def run(adjList: ArrayBuffer[Vertex]): Option[ArrayBuffer[Int]] = {
+    val INFINITY = Int.MaxValue
+    val nrVertex = adjList.size
 
+    val arr = new ArrayBuffer[ArrayBuffer[Int]]()
+    val lineArrSource = new ArrayBuffer[Int]()
+    lineArrSource.addOne(0)
+    for (j <- 2 to nrVertex) lineArrSource.addOne(INFINITY)
+    arr.addOne(lineArrSource)
+
+    for (i <- 1 to nrVertex) {
+      val lineArr = new ArrayBuffer[Int]()
+      for (j <- 0 to nrVertex - 1) {
+        val v = adjList(j)
+        var minVal = arr(i - 1)(j)
+        for (inEdge <- v.inEdges) {
+          if (arr(i - 1)(inEdge.tail) != INFINITY)
+            minVal = Math.min(minVal, arr(i - 1)(inEdge.tail) + inEdge.weight)
+        }
+        lineArr.addOne(minVal)
+      }
+      arr.addOne(lineArr)
+    }
+
+    // We test if a negative cycle exists by checking if the last 2 runs of the loop generated the same values
+    if (arr(nrVertex - 1).sameElements(arr(nrVertex))) return Some(arr(nrVertex - 1))
+    None // If a negative cycle was detected we announce that by returning None
+  }
 }

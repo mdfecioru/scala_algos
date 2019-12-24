@@ -35,7 +35,13 @@ object DijkstraShortestPath extends App {
     *       - heapKey[tailOfEdge] = min (heapKey[tailOfEdge], D[nextVertex] + edgeWeight)
     *       - add back tailOfEdge in minHeap
     * - COMPLEXITY:
-    *     - O(m * log(n)) where m is the number of edges and n tye number of vertices
+    *   - O(m * log(n)) where m is the number of edges and n tye number of vertices
+    * - COMMENTS:
+    *   - The algorithm always works ONLY for positive weights.
+    *   - The algorithm is not suited to be run on a distributed infrastructure
+    *   - The Bellman-Ford algorithm is a solution for the 2 issues above.
+    *     - More specific, it will allow edges with negative weights as long as there is no cycle of a negative value.
+    *       In the case of a cycle with negative value, the algorithm will fail and will identify one such cycle.
     */
 
   case class Edge(tail: Int, head: Int,  weight: Int)

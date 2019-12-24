@@ -38,7 +38,7 @@ object FloydWarshallAllPairsShortestPath extends App {
   }
 
   for (k <- 0 to nrVertex-1) {
-    var t = arrCurr
+    val t = arrCurr
     arrCurr = arrPrev
     arrPrev = t
 
