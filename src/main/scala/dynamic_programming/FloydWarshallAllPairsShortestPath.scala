@@ -6,19 +6,15 @@ import scala.io.Source
 object FloydWarshallAllPairsShortestPath extends App {
 
   val INFINITY = Int.MaxValue
-  //val filename = "src/main/resources/floydwarshall_all_pairs_shortest_path.txt"
-  val filename = "src/main/resources/large.txt"
+  val filename = "src/main/resources/floydwarshall_all_pairs_shortest_path.txt"
   val iter = Source.fromFile(filename).getLines()
   val nrVertex =iter.next().toInt
 
   var arrCurr = new ArrayBuffer[ArrayBuffer[Int]](nrVertex)
   var arrPrev = new ArrayBuffer[ArrayBuffer[Int]](nrVertex)
-  var kk = 0;
   for (_ <- 0 to nrVertex-1) {
     val arr0 = new ArrayBuffer[Int](nrVertex)
     val arr1 = new ArrayBuffer[Int](nrVertex)
-    kk = kk + 1
-    if (kk % 10 == 0) println("We are here - kk: ", kk)
 
     for (_ <- 0 to nrVertex-1) {
       arr0.addOne(INFINITY)
@@ -42,8 +38,6 @@ object FloydWarshallAllPairsShortestPath extends App {
     arrCurr = arrPrev
     arrPrev = t
 
-    if (k % 10 == 0) println("We are here: ", k)
-
     for (i <- 0 to nrVertex-1) {
       for (j <- 0 to nrVertex-1) {
         var minVal = arrPrev(i)(j)
@@ -55,8 +49,7 @@ object FloydWarshallAllPairsShortestPath extends App {
   }
 
   println("Negative Cycles: ", checkNegativeCycles(arrCurr))
-  println("Shortest Shortest Path: ", shortestShortestPath(arrCurr))
-  //printResults(arrCurr)
+  printResults(arrCurr)
 
   def printResults(arr: ArrayBuffer[ArrayBuffer[Int]]): Unit = {
     for (line <- arr) {
