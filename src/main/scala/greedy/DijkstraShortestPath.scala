@@ -2,7 +2,9 @@ package greedy
 
 import java.util.PriorityQueue
 
-import scala.collection.mutable.{ArrayBuffer, ListBuffer}
+import util.GraphTypes.{CheapestPath, Edge, Vertex}
+
+import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
 
 object DijkstraShortestPath extends App {
@@ -44,59 +46,69 @@ object DijkstraShortestPath extends App {
     *       In the case of a cycle with negative value, the algorithm will fail and will identify one such cycle.
     */
 
-  case class Edge(tail: Int, head: Int,  weight: Int)
-  case class Vertex(edges: ArrayBuffer[Edge])
-  case class HeapNode(nodeIndex: Int, cheapestPathWeight: Int, cheapestPath: ArrayBuffer[Edge])
+  def readGraphFromFile(filename: String): ArrayBuffer[Vertex] = {
 
-  val INFINITY = Int.MaxValue
-  val adjList = new ArrayBuffer[Vertex]()
-  val heapNodeList = new ArrayBuffer[HeapNode]()
-  val minHeap = new PriorityQueue[HeapNode]((o1, o2) => o1.cheapestPathWeight compare o2.cheapestPathWeight)
+    val adjList = new ArrayBuffer[Vertex]()
+    val iter = Source.fromFile(filename).getLines()
+    val nrVertex = iter.next().toInt
 
-  val filename = "src/main/resources/dijkstra_shortest_path.txt"
-  val iter = Source.fromFile(filename).getLines()
-  val nr_vertex =iter.next().toInt
+    for (_ <- 0 to nrVertex-1) {
+      adjList.addOne(Vertex(new ArrayBuffer[Edge](), new ArrayBuffer[Edge]()))
+    }
 
-  adjList.addOne(Vertex(new ArrayBuffer[Edge]()))
-  heapNodeList.addOne(HeapNode(0, 0, new ArrayBuffer[Edge]()))
-  for (i <- 2 to nr_vertex) {
-    adjList.addOne(Vertex(new ArrayBuffer[Edge]()))
-    heapNodeList.addOne(HeapNode(i-1, INFINITY, null))
+    for (line <- iter) {
+      val items = line.split(" ")
+      val v1 = items(0).toInt - 1
+      val v2 = items(1).toInt - 1
+      val w = items(2).toInt
+      adjList(v2).inEdges.addOne(Edge(v1, v2, w))
+      adjList(v1).outEdges.addOne(Edge(v1, v2, w))
+    }
+
+    adjList
   }
 
-  for (line <- iter) {
-    val items = line.split(" ")
-    val v1 = items(0).toInt - 1
-    val v2 = items(1).toInt - 1
-    val w = items(2).toInt
-    adjList(v1).edges.addOne(Edge(v1, v2, w))
-  }
+  def run(adjList: ArrayBuffer[Vertex], startVertex: Int): ArrayBuffer[CheapestPath] = {
+    val INFINITY = Int.MaxValue
+    val nrVertex = adjList.size
+    val heapNodeList = new ArrayBuffer[CheapestPath]()
+    val minHeap = new PriorityQueue[CheapestPath]((o1, o2) => o1.cheapestPathWeight compare o2.cheapestPathWeight)
 
-  for (e <- adjList(0).edges) {
-    heapNodeList(e.head) = HeapNode(e.head, e.weight, new ArrayBuffer[Edge]().addOne(e))
-  }
+    for (i <- 0 to nrVertex-1) {
+      heapNodeList.addOne(CheapestPath(i, INFINITY, null))
+    }
+    //heapNodeList.addOne(CheapestPath(0, 0, new ArrayBuffer[Edge]()))
+    heapNodeList(startVertex) = CheapestPath(startVertex, 0, new ArrayBuffer[Edge]())
 
-  for (i <- 1 to nr_vertex-1) {
-    minHeap.add(heapNodeList(i))
-  }
+    for (e <- adjList(startVertex).outEdges) {
+      heapNodeList(e.head) = CheapestPath(e.head, e.weight, new ArrayBuffer[Edge]().addOne(e))
+    }
 
-  while (minHeap.size() > 0) {
-    val n = minHeap.poll()
-    val prevNode = heapNodeList(n.cheapestPath(0).tail)
-    // Save the final result for node n in heapNodeList
-    heapNodeList(n.nodeIndex) = HeapNode(n.nodeIndex, n.cheapestPathWeight, prevNode.cheapestPath++n.cheapestPath)
+    for (i <- 0 to nrVertex - 1) {
+      if (i != startVertex) minHeap.add(heapNodeList(i))
+    }
 
-    for (e <- adjList(n.nodeIndex).edges) {
-      val neighborIndex = e.head
-      val neighborHeapNode = heapNodeList(neighborIndex)
-      if ((minHeap.contains(neighborHeapNode)) && (neighborHeapNode.cheapestPathWeight > n.cheapestPathWeight + e.weight)) {
-        minHeap.remove(neighborHeapNode)
-        heapNodeList(neighborIndex) = HeapNode(neighborIndex, n.cheapestPathWeight + e.weight, new ArrayBuffer[Edge]().addOne(e))
-        minHeap.add(heapNodeList(neighborIndex))
+    while (minHeap.size() > 0) {
+      val n = minHeap.poll()
+
+      // If this test is true, then all the nodes remaining in the minHeap are nor reachable from startVertex
+      if (n.cheapestPathWeight == INFINITY) return heapNodeList
+
+      val prevNode = heapNodeList(n.cheapestPath(0).tail)
+      // Save the final result for node n in heapNodeList
+      heapNodeList(n.targetVertex) = CheapestPath(n.targetVertex, n.cheapestPathWeight, prevNode.cheapestPath ++ n.cheapestPath)
+
+      for (e <- adjList(n.targetVertex).outEdges) {
+        val neighborIndex = e.head
+        val neighborHeapNode = heapNodeList(neighborIndex)
+        if ((minHeap.contains(neighborHeapNode)) && (neighborHeapNode.cheapestPathWeight > n.cheapestPathWeight + e.weight)) {
+          minHeap.remove(neighborHeapNode)
+          heapNodeList(neighborIndex) = CheapestPath(neighborIndex, n.cheapestPathWeight + e.weight, new ArrayBuffer[Edge]().addOne(e))
+          minHeap.add(heapNodeList(neighborIndex))
+        }
       }
     }
+
+    heapNodeList
   }
-
-  println("Shortest path results: " + heapNodeList)
-
 }
