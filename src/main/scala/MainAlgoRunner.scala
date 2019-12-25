@@ -1,14 +1,13 @@
-import dynamic_programming.BellmanFordShortestPath
+import greedy.DijkstraShortestPath
 
 object MainAlgoRunner extends App {
 
-/*
   /* BellmanFordShortestPath algorithm */
-  val adjMatrix = BellmanFordShortestPath.
-                    readGraphFromFile("src/main/resources/bellmanford_shortest_path3.txt")
-  val result = BellmanFordShortestPath.run(adjMatrix)
-  if (result.isDefined) println(result)
-  else println("NEGATIVE CYCLE DETECTED!")
-*/
+  val adjMatrix = DijkstraShortestPath.
+                    readGraphFromFile("src/main/resources/dijkstra_shortest_path.txt")
+  val result = DijkstraShortestPath.run(adjMatrix, 3)
+
+  for (i <- result)
+    println(i)
 
 }
