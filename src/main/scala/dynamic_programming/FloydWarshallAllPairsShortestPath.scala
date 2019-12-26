@@ -3,53 +3,66 @@ package dynamic_programming
 import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
 
-object FloydWarshallAllPairsShortestPath extends App {
+object FloydWarshallAllPairsShortestPath {
 
-  val INFINITY = Int.MaxValue
-  val filename = "src/main/resources/floydwarshall_all_pairs_shortest_path.txt"
-  val iter = Source.fromFile(filename).getLines()
-  val nrVertex =iter.next().toInt
+  final val INFINITY = Int.MaxValue
 
-  var arrCurr = new ArrayBuffer[ArrayBuffer[Int]](nrVertex)
-  var arrPrev = new ArrayBuffer[ArrayBuffer[Int]](nrVertex)
-  for (_ <- 0 to nrVertex-1) {
-    val arr0 = new ArrayBuffer[Int](nrVertex)
-    val arr1 = new ArrayBuffer[Int](nrVertex)
-
-    for (_ <- 0 to nrVertex-1) {
-      arr0.addOne(INFINITY)
-      arr1.addOne(INFINITY)
+  def run(adjMatrix: ArrayBuffer[ArrayBuffer[Int]]): Option[ArrayBuffer[ArrayBuffer[Int]]] = {
+    var arrCurr = adjMatrix
+    val nrVertex = adjMatrix.size
+    var arrPrev = new ArrayBuffer[ArrayBuffer[Int]](nrVertex)
+    for (_ <- 0 to nrVertex - 1) {
+      val arr0 = new ArrayBuffer[Int](nrVertex)
+      for (_ <- 0 to nrVertex - 1) {
+        arr0.addOne(INFINITY)
+      }
+      arrPrev.addOne(arr0)
     }
-    arrCurr.addOne(arr0)
-    arrPrev.addOne(arr1)
-  }
-  for (i <- 0 to nrVertex-1) arrCurr(i)(i) = 0
 
-  for (line <- iter) {
-    val items = line.split(" ")
-    val v1 = items(0).toInt - 1
-    val v2 = items(1).toInt - 1
-    val w = items(2).toInt
-    arrCurr(v1)(v2) = w
-  }
+    for (k <- 0 to nrVertex - 1) {
+      val t = arrCurr
+      arrCurr = arrPrev
+      arrPrev = t
 
-  for (k <- 0 to nrVertex-1) {
-    val t = arrCurr
-    arrCurr = arrPrev
-    arrPrev = t
-
-    for (i <- 0 to nrVertex-1) {
-      for (j <- 0 to nrVertex-1) {
-        var minVal = arrPrev(i)(j)
-        if ((arrPrev(i)(k) != INFINITY) && (arrPrev(k)(j) != INFINITY))
-          minVal = Math.min(minVal, arrPrev(i)(k) + arrPrev(k)(j))
-        arrCurr(i)(j) = minVal
+      for (i <- 0 to nrVertex - 1) {
+        for (j <- 0 to nrVertex - 1) {
+          var minVal = arrPrev(i)(j)
+          if ((arrPrev(i)(k) != INFINITY) && (arrPrev(k)(j) != INFINITY))
+            minVal = Math.min(minVal, arrPrev(i)(k) + arrPrev(k)(j))
+          arrCurr(i)(j) = minVal
+        }
       }
     }
+
+    // If we have identified negative cycles, we return "None"
+    if (checkNegativeCycles(arrCurr)) return None
+    Some(arrCurr)
   }
 
-  println("Negative Cycles: ", checkNegativeCycles(arrCurr))
-  printResults(arrCurr)
+  def readGraphFromFile(filename: String): ArrayBuffer[ArrayBuffer[Int]] = {
+    val iter = Source.fromFile(filename).getLines()
+    val nrVertex = iter.next().toInt
+    val adjMatrix = new ArrayBuffer[ArrayBuffer[Int]](nrVertex)
+
+    for (_ <- 0 to nrVertex - 1) {
+      val arr0 = new ArrayBuffer[Int](nrVertex)
+      for (_ <- 0 to nrVertex - 1) {
+        arr0.addOne(INFINITY)
+      }
+      adjMatrix.addOne(arr0)
+    }
+    for (i <- 0 to nrVertex - 1) adjMatrix(i)(i) = 0
+
+    for (line <- iter) {
+      val items = line.split(" ")
+      val v1 = items(0).toInt - 1
+      val v2 = items(1).toInt - 1
+      val w = items(2).toInt
+      adjMatrix(v1)(v2) = w
+    }
+
+    adjMatrix
+  }
 
   def printResults(arr: ArrayBuffer[ArrayBuffer[Int]]): Unit = {
     for (line <- arr) {
