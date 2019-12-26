@@ -54,17 +54,17 @@ object BellmanFordShortestPath {
     val arr = new ArrayBuffer[ArrayBuffer[Int]]()
     val lineArrSource = new ArrayBuffer[Int]()
     lineArrSource.addOne(0)
-    for (j <- 2 to nrVertex) lineArrSource.addOne(INFINITY)
+    for (_ <- 1 to nrVertex-1) lineArrSource.addOne(INFINITY)
     arr.addOne(lineArrSource)
 
-    for (i <- 1 to nrVertex) {
+    for (i <- 0 to nrVertex-1) {
       val lineArr = new ArrayBuffer[Int]()
       for (j <- 0 to nrVertex - 1) {
         val v = adjList(j)
-        var minVal = arr(i - 1)(j)
+        var minVal = arr(i)(j)
         for (inEdge <- v.inEdges) {
-          if (arr(i - 1)(inEdge.tail) != INFINITY)
-            minVal = Math.min(minVal, arr(i - 1)(inEdge.tail) + inEdge.weight)
+          if (arr(i)(inEdge.tail) != INFINITY)
+            minVal = Math.min(minVal, arr(i)(inEdge.tail) + inEdge.weight)
         }
         lineArr.addOne(minVal)
       }
