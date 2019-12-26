@@ -7,7 +7,7 @@ import util.GraphTypes.{CheapestPath, Edge, Vertex}
 import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
 
-object DijkstraShortestPath extends App {
+object DijkstraShortestPath {
   /**
     *  Dijkstra's Single Source Shortest Path
     * - INPUT DATA:
@@ -46,6 +46,8 @@ object DijkstraShortestPath extends App {
     *       In the case of a cycle with negative value, the algorithm will fail and will identify one such cycle.
     */
 
+  final val INFINITY = Int.MaxValue
+
   def readGraphFromFile(filename: String): ArrayBuffer[Vertex] = {
 
     val adjList = new ArrayBuffer[Vertex]()
@@ -69,7 +71,6 @@ object DijkstraShortestPath extends App {
   }
 
   def run(adjList: ArrayBuffer[Vertex], startVertex: Int): ArrayBuffer[CheapestPath] = {
-    val INFINITY = Int.MaxValue
     val nrVertex = adjList.size
     val heapNodeList = new ArrayBuffer[CheapestPath]()
     val minHeap = new PriorityQueue[CheapestPath]((o1, o2) => o1.cheapestPathWeight compare o2.cheapestPathWeight)
@@ -77,7 +78,6 @@ object DijkstraShortestPath extends App {
     for (i <- 0 to nrVertex-1) {
       heapNodeList.addOne(CheapestPath(i, INFINITY, null))
     }
-    //heapNodeList.addOne(CheapestPath(0, 0, new ArrayBuffer[Edge]()))
     heapNodeList(startVertex) = CheapestPath(startVertex, 0, new ArrayBuffer[Edge]())
 
     for (e <- adjList(startVertex).outEdges) {

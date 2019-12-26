@@ -5,7 +5,7 @@ import util.GraphTypes.{CheapestPath, Edge}
 import scala.collection.mutable.ArrayBuffer
 
 class DijkstraShortestPathTest extends AnyFunSpec {
-  describe("Running using Bellman-Ford shortest path algo") {
+  describe("Running using Dijkstra shortest path algo") {
     it("should find the following shortest path for dijkstra_shortest_path.txt input and startVertex 0") {
       val adjMatrix = DijkstraShortestPath.
         readGraphFromFile("src/main/resources/dijkstra_shortest_path.txt")

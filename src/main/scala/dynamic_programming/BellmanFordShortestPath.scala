@@ -5,7 +5,7 @@ import util.GraphTypes.{Edge, Vertex}
 import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
 
-object BellmanFordShortestPath extends App {
+object BellmanFordShortestPath {
   /**
     *  Bellman-Ford Single Source Shortest Path
     * - INPUT DATA:
@@ -25,6 +25,8 @@ object BellmanFordShortestPath extends App {
     * - COMPLEXITY:
     * - COMMENTS:
     */
+
+  final val INFINITY = Int.MaxValue
 
   def readGraphFromFile(filename: String): ArrayBuffer[Vertex] = {
     val adjList = new ArrayBuffer[Vertex]()
@@ -48,9 +50,7 @@ object BellmanFordShortestPath extends App {
   }
 
   def run(adjList: ArrayBuffer[Vertex]): Option[ArrayBuffer[Int]] = {
-    val INFINITY = Int.MaxValue
     val nrVertex = adjList.size
-
     val arr = new ArrayBuffer[ArrayBuffer[Int]]()
     val lineArrSource = new ArrayBuffer[Int]()
     lineArrSource.addOne(0)
