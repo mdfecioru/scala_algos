@@ -9,7 +9,7 @@ class DijkstraShortestPathTest extends AnyFunSpec {
     it("should find the following shortest path for dijkstra_shortest_path.txt input and startVertex 0") {
       val adjMatrix = DijkstraShortestPath.
         readGraphFromFile("src/main/resources/dijkstra_shortest_path.txt")
-      val result = DijkstraShortestPath.run(adjMatrix, 0)
+      val result = DijkstraShortestPath.run(adjMatrix)
       assert(result.sameElements(Array(CheapestPath(0,0,ArrayBuffer()),
               CheapestPath(1,2,ArrayBuffer(Edge(0,1,2))),
               CheapestPath(2,5,ArrayBuffer(Edge(0,1,2), Edge(1,2,3))),

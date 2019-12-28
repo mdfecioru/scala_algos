@@ -70,7 +70,7 @@ object DijkstraShortestPath {
     adjList
   }
 
-  def run(adjList: ArrayBuffer[Vertex], startVertex: Int): ArrayBuffer[CheapestPath] = {
+  def run(adjList: ArrayBuffer[Vertex], startVertex: Int = 0): ArrayBuffer[CheapestPath] = {
     val nrVertex = adjList.size
     val heapNodeList = new ArrayBuffer[CheapestPath]()
     val minHeap = new PriorityQueue[CheapestPath]((o1, o2) => o1.cheapestPathWeight compare o2.cheapestPathWeight)
