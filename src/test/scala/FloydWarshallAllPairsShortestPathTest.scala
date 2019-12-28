@@ -3,7 +3,7 @@ import org.scalatest.funspec.AnyFunSpec
 
 import scala.collection.mutable.ArrayBuffer
 
-class FloydWarshallAllPairsShortestPathTest  extends AnyFunSpec {
+class FloydWarshallAllPairsShortestPathTest extends AnyFunSpec {
   describe("Running using Floyd-Warshall shortest path algo") {
     it("should find all shortest paths for floydwarshall_all_pairs_shortest_path.txt") {
       val adjMatrix = FloydWarshallAllPairsShortestPath.
