@@ -49,12 +49,14 @@ object BellmanFordShortestPath {
     adjList
   }
 
-  def run(adjList: ArrayBuffer[Vertex]): Option[ArrayBuffer[Int]] = {
+  def run(adjList: ArrayBuffer[Vertex], startVertex: Int = 0): Option[ArrayBuffer[Int]] = {
     val nrVertex = adjList.size
     val arr = new ArrayBuffer[ArrayBuffer[Int]]()
     val lineArrSource = new ArrayBuffer[Int]()
-    lineArrSource.addOne(0)
-    for (_ <- 1 to nrVertex-1) lineArrSource.addOne(INFINITY)
+    for (_ <- 0 to nrVertex-1) {
+      lineArrSource.addOne(INFINITY)
+    }
+    lineArrSource(startVertex) = 0
     arr.addOne(lineArrSource)
 
     for (i <- 0 to nrVertex-1) {
