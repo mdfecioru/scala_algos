@@ -34,5 +34,18 @@ class FloydWarshallAllPairsShortestPathTest  extends AnyFunSpec {
       val result = FloydWarshallAllPairsShortestPath.run(adjMatrix)
       assert(!result.isDefined)
     }
+    it("should find all shortest paths for johnson_all_pairs_shortest_path.txt") {
+      val adjMatrix = FloydWarshallAllPairsShortestPath.
+        readGraphFromFile("src/main/resources/johnson_all_pairs_shortest_path.txt")
+      val result = FloydWarshallAllPairsShortestPath.run(adjMatrix)
+
+      assert(result.isDefined)
+      assert(result.get.sameElements(Array(ArrayBuffer(0, -2, -3, -1, -6, 2147483647),
+        ArrayBuffer(3, 0, -1, 1, -4, 2147483647),
+        ArrayBuffer(4, 2, 0, 2, -3, 2147483647),
+        ArrayBuffer(2147483647, 2147483647, 2147483647, 0, 2147483647, 2147483647),
+        ArrayBuffer(2147483647, 2147483647, 2147483647, 2147483647, 0, 2147483647),
+        ArrayBuffer(2147483647, 2147483647, 2147483647, 1, -4, 0))))
+    }
   }
 }
