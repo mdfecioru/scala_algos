@@ -34,7 +34,9 @@ object TravelingSalesmanProblemGreedy {
     path.addOne(startIndex)
     vertexList.remove(startIndex)
     while (vertexList.nonEmpty) {
-      val nextPoint = getClosestPoint(sourcePoint, vertexList)
+      val nextPointIndex = getClosestPoint(sourcePoint, vertexList)
+      val nextPoint = vertexList(nextPointIndex)
+      vertexList.remove(nextPointIndex)
       path.addOne(nextPoint.vertexIndex)
       pathDistance = pathDistance +  Math.sqrt(distPointsNoSqrt(sourcePoint, nextPoint))
       sourcePoint = nextPoint
@@ -50,7 +52,7 @@ object TravelingSalesmanProblemGreedy {
     (p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y)
   }
 
-  def getClosestPoint(source: Point, listPoints: ArrayBuffer[Point]): Point = {
+  def getClosestPoint(source: Point, listPoints: ArrayBuffer[Point]): Int = {
     var minDist = distPointsNoSqrt(source, listPoints(0))
     var minIndex = 0
 
@@ -62,8 +64,6 @@ object TravelingSalesmanProblemGreedy {
       }
     }
 
-    val p = listPoints(minIndex)
-    listPoints.remove(minIndex)
-    p
+    minIndex
   }
 }
