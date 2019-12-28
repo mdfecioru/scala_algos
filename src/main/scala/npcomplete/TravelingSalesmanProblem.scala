@@ -65,11 +65,10 @@ object TravelingSalesmanProblem {
       }
     }
 
+    // hmCurr has only one value at this point - all the cheapest paths from the start vertex to each other vertexes
+    val hmv = hmCurr.valuesIterator.next()
     var minV = INFINITY
-    for ((_, hmv) <- hmCurr) {
-      hmv foreach (x => minV = Math.min(minV, x._2 + adjMatrix(0)(x._1)))
-    }
-
+    hmv foreach (x => minV = Math.min(minV, x._2 + adjMatrix(0)(x._1)))
     minV
   }
 
