@@ -1,6 +1,6 @@
 package dynamic_programming
 
-import util.GraphTypes.{Edge, Vertex}
+import util.GraphTypes._
 
 import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
@@ -26,28 +26,6 @@ object BellmanFordShortestPath {
     * - COMMENTS:
     */
 
-  final val INFINITY = Int.MaxValue
-
-  def readGraphFromFile(filename: String): ArrayBuffer[Vertex] = {
-    val adjList = new ArrayBuffer[Vertex]()
-    val iter = Source.fromFile(filename).getLines()
-    val nrVertex =iter.next().toInt
-
-    for (_ <- 1 to nrVertex) {
-      adjList.addOne(Vertex(new ArrayBuffer[Edge](), new ArrayBuffer[Edge]()))
-    }
-
-    for (line <- iter) {
-      val items = line.split(" ")
-      val v1 = items(0).toInt - 1
-      val v2 = items(1).toInt - 1
-      val w = items(2).toInt
-      adjList(v2).inEdges.addOne(Edge(v1, v2, w))
-      adjList(v1).outEdges.addOne(Edge(v1, v2, w))
-    }
-
-    adjList
-  }
 
   def run(adjList: ArrayBuffer[Vertex], startVertex: Int = 0): Option[ArrayBuffer[Int]] = {
     val nrVertex = adjList.size
