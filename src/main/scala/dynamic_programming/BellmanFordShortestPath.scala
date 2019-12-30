@@ -3,7 +3,6 @@ package dynamic_programming
 import util.GraphTypes._
 
 import scala.collection.mutable.ArrayBuffer
-import scala.io.Source
 
 object BellmanFordShortestPath {
   /**
