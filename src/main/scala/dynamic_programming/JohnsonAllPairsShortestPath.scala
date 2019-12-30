@@ -1,10 +1,9 @@
 package dynamic_programming
 
 import greedy.DijkstraShortestPath
-import util.GraphTypes.{Edge, Vertex}
+import util.GraphTypes._
 
 import scala.collection.mutable.ArrayBuffer
-import scala.io.Source
 
 object JohnsonAllPairsShortestPath {
 
@@ -23,7 +22,7 @@ object JohnsonAllPairsShortestPath {
     result
   }
 
-  def addVertexWeightZero(adjList: ArrayBuffer[Vertex]): ArrayBuffer[Vertex] = {
+  private def addVertexWeightZero(adjList: ArrayBuffer[Vertex]): ArrayBuffer[Vertex] = {
     val adjListNew = new ArrayBuffer[Vertex]()
     val nrVertex = adjList.size
 
@@ -43,7 +42,7 @@ object JohnsonAllPairsShortestPath {
     adjListNew
   }
 
-  def reweightGraph(adjList: ArrayBuffer[Vertex], weights: ArrayBuffer[Int]): ArrayBuffer[Vertex] = {
+  private def reweightGraph(adjList: ArrayBuffer[Vertex], weights: ArrayBuffer[Int]): ArrayBuffer[Vertex] = {
     val adjListReweighted = new ArrayBuffer[Vertex]()
 
     for (vertex <- adjList) {
@@ -59,7 +58,7 @@ object JohnsonAllPairsShortestPath {
     adjListReweighted
   }
 
-  def computeAllShortestPaths(adjList: ArrayBuffer[Vertex], weights: ArrayBuffer[Int]):
+  private def computeAllShortestPaths(adjList: ArrayBuffer[Vertex], weights: ArrayBuffer[Int]):
                                                               Option[ArrayBuffer[ArrayBuffer[Int]]] = {
     val nrVertex = adjList.size
     val allPathMatrix = new ArrayBuffer[ArrayBuffer[Int]](nrVertex)
@@ -77,36 +76,4 @@ object JohnsonAllPairsShortestPath {
 
     Some(allPathMatrix)
   }
-
-  def readGraphFromFile(filename: String): ArrayBuffer[Vertex] = {
-    val adjList = new ArrayBuffer[Vertex]()
-    val iter = Source.fromFile(filename).getLines()
-    val nrVertex =iter.next().toInt
-
-    for (_ <- 1 to nrVertex) {
-      adjList.addOne(Vertex(new ArrayBuffer[Edge](), new ArrayBuffer[Edge]()))
-    }
-
-    for (line <- iter) {
-      val items = line.split(" ")
-      val v1 = items(0).toInt - 1
-      val v2 = items(1).toInt - 1
-      val w = items(2).toInt
-      adjList(v2).inEdges.addOne(Edge(v1, v2, w))
-      adjList(v1).outEdges.addOne(Edge(v1, v2, w))
-    }
-
-    adjList
-  }
-
-  def printResults(arr: ArrayBuffer[ArrayBuffer[Int]]): Unit = {
-    for (line <- arr) {
-      for (elem <- line) {
-        if (elem > INFINITY / 2) print("  INF")
-        else print(f"$elem%5d")
-      }
-      println()
-    }
-  }
-
 }

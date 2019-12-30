@@ -2,10 +2,9 @@ package greedy
 
 import java.util.PriorityQueue
 
-import util.GraphTypes.{CheapestPath, Edge, Vertex}
+import util.GraphTypes._
 
 import scala.collection.mutable.ArrayBuffer
-import scala.io.Source
 
 object DijkstraShortestPath {
   /**
@@ -46,29 +45,6 @@ object DijkstraShortestPath {
     *       In the case of a cycle with negative value, the algorithm will fail and will identify one such cycle.
     */
 
-  final val INFINITY = Int.MaxValue
-
-  def readGraphFromFile(filename: String): ArrayBuffer[Vertex] = {
-
-    val adjList = new ArrayBuffer[Vertex]()
-    val iter = Source.fromFile(filename).getLines()
-    val nrVertex = iter.next().toInt
-
-    for (_ <- 0 to nrVertex-1) {
-      adjList.addOne(Vertex(new ArrayBuffer[Edge](), new ArrayBuffer[Edge]()))
-    }
-
-    for (line <- iter) {
-      val items = line.split(" ")
-      val v1 = items(0).toInt - 1
-      val v2 = items(1).toInt - 1
-      val w = items(2).toInt
-      adjList(v2).inEdges.addOne(Edge(v1, v2, w))
-      adjList(v1).outEdges.addOne(Edge(v1, v2, w))
-    }
-
-    adjList
-  }
 
   def run(adjList: ArrayBuffer[Vertex], startVertex: Int = 0): ArrayBuffer[CheapestPath] = {
     val nrVertex = adjList.size

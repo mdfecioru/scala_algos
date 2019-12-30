@@ -1,11 +1,11 @@
 import npcomplete.TravelingSalesmanProblemGreedy
 import org.scalatest.funspec.AnyFunSpec
+import util.GraphIO
 
 class TravelingSalesmanProblemGreedyTest extends AnyFunSpec {
   describe("Running the greedy version of Travel Salesman algo") {
     it("should find the following solution for tsp_greedy.txt") {
-      val vertexList = TravelingSalesmanProblemGreedy.
-        readGraphFromFile("src/main/resources/tsp_greedy.txt")
+      val vertexList = GraphIO.directedWithWeightsAsPointList("src/main/resources/tsp_greedy.txt")
       val result = TravelingSalesmanProblemGreedy.run(vertexList)
 
       assert(result.distance.toInt == 26)

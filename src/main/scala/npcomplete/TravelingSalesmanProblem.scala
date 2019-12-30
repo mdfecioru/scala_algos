@@ -2,35 +2,10 @@ package npcomplete
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
-import scala.io.Source
+
+import util.GraphTypes._
 
 object TravelingSalesmanProblem {
-  final val INFINITY = Int.MaxValue
-
-  def readGraphFromFile(filename: String): ArrayBuffer[ArrayBuffer[Int]] = {
-    val iter = Source.fromFile(filename).getLines()
-    val nrVertex = iter.next().toInt
-    val adjMatrix = new ArrayBuffer[ArrayBuffer[Int]](nrVertex)
-
-    for (_ <- 0 to nrVertex - 1) {
-      val arr0 = new ArrayBuffer[Int](nrVertex)
-      for (_ <- 0 to nrVertex - 1) {
-        arr0.addOne(INFINITY)
-      }
-      adjMatrix.addOne(arr0)
-    }
-
-    for (line <- iter) {
-      val items = line.split(" ")
-      val v1 = items(0).toInt - 1
-      val v2 = items(1).toInt - 1
-      val w = items(2).toInt
-      adjMatrix(v1)(v2) = w
-      adjMatrix(v2)(v1) = w
-    }
-
-    adjMatrix
-  }
 
   def run(adjMatrix: ArrayBuffer[ArrayBuffer[Int]]): Int = {
     val nrVertex = adjMatrix.size
@@ -72,20 +47,7 @@ object TravelingSalesmanProblem {
     minV
   }
 
-  def printArr(arr: ArrayBuffer[ArrayBuffer[Int]]) = {
-    for (line <- arr) {
-      var strToPrint = "("
-      for (elem <- line) {
-        strToPrint = strToPrint + f"$elem%3d,"
-      }
-      strToPrint = strToPrint.dropRight(1)
-      strToPrint = strToPrint + ") "
-      print(strToPrint)
-    }
-    println()
-  }
-
-  def generateCombination(currentStep: ArrayBuffer[ArrayBuffer[Int]], size: Int): ArrayBuffer[ArrayBuffer[Int]] = {
+  private def generateCombination(currentStep: ArrayBuffer[ArrayBuffer[Int]], size: Int): ArrayBuffer[ArrayBuffer[Int]] = {
     val next = new ArrayBuffer[ArrayBuffer[Int]]()
     for (c <- currentStep) {
       val maxElem = c(c.size-1)
@@ -99,7 +61,7 @@ object TravelingSalesmanProblem {
     next
   }
 
-  def generateHashKey(arr: ArrayBuffer[Int]): String = {
+  private def generateHashKey(arr: ArrayBuffer[Int]): String = {
     var s = ""
     for (elem <- arr) {
       s = s + elem.toString() + "_"
